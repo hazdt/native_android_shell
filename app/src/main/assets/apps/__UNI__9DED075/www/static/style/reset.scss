@@ -1,0 +1,159 @@
+
+
+h1,h2,h3,h4,h5,h6,
+button {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+ul,ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+em {
+  font-style: normal;
+}
+
+i, span, em {
+  box-sizing: border-box;
+  font-style: normal;
+  //color: #333;
+}
+
+.textarea-placeholder,
+.input-placeholder {
+  color: #a6a6a6;
+  font-size: 3.2vw;
+  font-weight: 400;
+}
+
+.posfixed{z-index: 1;position:fixed;top: 0;left: 0;width: 100vw;height: 100vh;background: rgba(0,0,0,0.5);}
+.perfect_center {
+  z-index: 1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+.perfect_center_y {
+  z-index: 1;
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  -o-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+.perfect_center_x {
+  z-index: 1;
+  position: absolute;
+  left: 50%;
+  /*-webkit-transform: translateX(-50%);*/
+  /*-moz-transform: translateX(-50%);*/
+  /*-ms-transform: translateX(-50%);*/
+  /*-o-transform: translateX(-50%);*/
+  transform: translateX(-50%);
+}
+.perfect_center_b:before,
+.perfect_center_a:after {
+  content: '';
+  z-index: 1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+.perfect_center_bx:before,
+.perfect_center_ax:after {
+  content: '';
+  z-index: 1;
+  position: absolute;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  -moz-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  -o-transform: translateX(-50%);
+  transform: translateX(-50%);
+}
+.perfect_center_by:before,
+.perfect_center_ay:after {
+  content: '';
+  z-index: 1;
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  -o-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+.pseudo_perfect_center:before, .pseudo_perfect_center:after {
+  z-index: 1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+.beyond_2line_omit {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+.beyond_one_omit {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.is_iphone_x{
+  padding-bottom: 5.5vw;
+}
+
+.not_data {
+  width: 100%;
+  padding-top: 5vw;
+  font-size: 3.7vw;
+  color: #fff;
+  text-align: center;
+  text-shadow: 0 0 1px #999;
+}
+
+.btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+button {
+  &[open-type="chooseAvatar"],
+  &[open-type="getPhoneNumber"],
+  &[open-type="contact"],
+  &[open-type="share"] {
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+  }
+}
+

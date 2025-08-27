@@ -1,0 +1,247 @@
+/*@font-face {
+  font-family: '思源宋体';
+  src: url('../fonts/SourceHanSerifCN-Regular.otf') format('opentype');
+}*/
+
+view, text, div, label, section, header, footer, aside, nav, main,
+h1, h2, h3, h4, h5, h6,
+div, span, em, i,
+view, text {
+  box-sizing: border-box;
+  font-family: '思源宋体';
+}
+
+.global_nav_title {
+  font-size: 4.27vw;
+  color: #fff;
+  font-weight: bold;
+}
+
+.global_nav_list {
+  z-index: 10;
+  position: fixed;
+  //top: v-bind(CustomBarCSS);
+  left: 0;
+  width: 100vw;
+  height: 14.4vw;
+  background-color: #fff;
+
+  .inside {
+    //display: flex;
+    padding: 2.67vw 0;
+    white-space: nowrap;
+  }
+
+  .item {
+    display: inline-flex;
+    width: 21.33vw;
+    height: 9.07vw;
+    background-image: url(/static/images/festival_tab_bg.png);
+    background-repeat: no-repeat;
+    background-size: 100%;
+    font-size: 3.47vw;
+    color: #b69464;
+
+    &:nth-of-type(n + 3) {
+      margin-left: 2.67vw;
+    }
+
+    &.hover {
+      background-image: url(/static/images/festival_tab_bg1.png);
+      background-color: rgba(246, 238, 224, 1);
+      color: #966523;
+      font-weight: bold;
+    }
+  }
+
+  .space {
+    display: inline-block;
+    width: 3.73vw;
+    opacity: 0;
+  }
+}
+
+.global_flag_head {
+  z-index: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 39.2vw;
+  overflow: hidden;
+}
+
+.double_wire_borders {
+  position: relative;
+  padding: 3.73vw 4vw 4.53vw;
+  border-radius: 0.53vw;
+  background-color: #f8f3e9;
+  box-shadow: 0 0.67vw 0.93vw 0 rgba(0, 0, 0, 0.3);
+
+  &:before,
+  &:after {
+    content: '';
+    z-index: 1;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    //-moz-transform: translate(-50%, -50%);
+    //-ms-transform: translate(-50%, -50%);
+    //-o-transform: translate(-50%, -50%);
+    //transform: translate(-50%, -50%);
+  }
+
+  &:before {
+    width: calc(100% - 3.47vw);
+    height: calc(100% - 3.47vw);
+    border: 3px solid #d4b29d;
+  }
+
+  &:after {
+    width: calc(100% - 4.8vw);
+    height: calc(100% - 4.8vw);
+    border: 1px solid #d4b29d;
+  }
+}
+
+.global_book_directory_box {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  // #ifdef H5
+  height: 50vh;
+  // #endif
+  // #ifndef H5
+  height: 166.93vw;
+  // #endif
+  padding-top: 12.27vw;
+  border-radius: 4vw 4vw 0 0;
+  background: rgba(247, 237, 214, 1);
+  transition: all .3s;
+
+  .icon_menu_hide {
+    z-index: 2200;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 8vw;
+    padding: 2.13vw 0;
+
+    image {
+      display: block;
+      width: 100vw;
+      height: 8vw;
+    }
+  }
+
+  .h1 {
+    padding: 0 3.73vw 3.73vw;
+    color: rgba(41, 41, 41, 1);
+    font-size: 4.27vw;
+    font-weight: bold;
+    line-height: 6.67vw;
+  }
+
+  .scroll-view {
+    flex: 1;
+    position: relative;
+    //height: 122.13vw;
+
+    scroll-view {
+      z-index: 1;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .ul {
+      padding: 0 3.73vw 26.67vw;
+
+      .li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 13.87vw;
+        border-top: 1px solid rgba(236, 225, 214, 1);
+
+        .title {
+          color: rgba(51, 51, 51, 1);
+          font-size: 3.73vw;
+          font-weight: 400;
+        }
+
+        .icon_lock {
+          width: 3.73vw;
+          height: 3.73vw;
+        }
+
+        .num {
+          color: rgba(167, 167, 167, 1);
+          font-size: 2.67vw;
+          font-weight: bold;
+        }
+
+        &.hover {
+          .title {
+            color: #C73827;
+          }
+        }
+      }
+    }
+  }
+
+  &.is_night {
+    border-top: 1px solid #1B1818;
+    background-color: #181818;
+
+    .h1 {
+      color: #959595;
+    }
+
+    .scroll-view {
+      .ul {
+        .li {
+          border-top-color: #343131;
+
+          .title {
+            color: #959595;
+          }
+
+          .num {
+            color: #959595;
+          }
+
+          &.hover {
+            .title {
+              color: #C73827;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.global_dot {
+  left: 0;
+  width: 3.2vw;
+  height: 3.2vw;
+  background-color: #966523;
+  transform: translateY(-50%) rotate(45deg);
+  transform-origin: center center;
+
+  &:before {
+    width: 0.53vw;
+    height: 100%;
+    background-color: #FFFAF1;
+  }
+
+  &:after {
+    width: 100%;
+    height: 0.53vw;
+    background-color: #FFFAF1;
+  }
+}
