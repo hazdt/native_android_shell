@@ -27,6 +27,16 @@
           "class": "uni.dcloud.io.uniplugin_richalert.RichAlertModule"
         }
       ]
+    },
+    {
+      "hooksClass": "",
+      "plugins": [
+        {
+          "type": "module",
+          "name": "admob-test",
+          "class": "io.dcloud.uniplugin_admob.AdmobModule"
+        }
+      ]
     }
   ]
 }

@@ -1,4 +1,4 @@
-package io.dcloud.uniplugin.admob;
+package io.dcloud.uniplugin_admob;
 
 import android.app.Activity;
 import android.util.Log;
@@ -12,7 +12,7 @@ import io.dcloud.feature.uniapp.annotation.UniJSMethod;
 import io.dcloud.feature.uniapp.bridge.UniJSCallback;
 import io.dcloud.feature.uniapp.common.UniModule;
 
-public class AdMobModule extends UniModule {
+public class AddModule extends UniModule {
     private InterstitialAd mInterstitialAd;
 
     @UniJSMethod(uiThread = true)
