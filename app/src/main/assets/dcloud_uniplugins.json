@@ -33,7 +33,7 @@
       "plugins": [
         {
           "type": "module",
-          "name": "admob-test",
+          "name": "admobModule",
           "class": "io.dcloud.uniplugin_admob.AdmobModule"
         }
       ]

@@ -1,116 +1,91 @@
 package com.jr.wannianli.admob;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
-import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.FullScreenContentCallback;
-import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.appopen.AppOpenAd;
 
-import java.util.Date;
+public class AppOpenAdManager {
 
-public class AppOpenAdManager implements Application.ActivityLifecycleCallbacks {
+    private static final String TAG = "AppOpenAdManager";
+    private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/9257395921"; // 测试ID
 
-    private static final String LOG_TAG = "AppOpenAdManager";
-
-    private final Context context;
-    private AppOpenAd appOpenAd = null;
-    private long loadTime = 0;
+    private AppOpenAd mAppOpenAd;
+    private boolean isLoadingAd = false;
     private boolean isShowingAd = false;
 
-    private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/3419835294";
+    private final Context context;
 
     public AppOpenAdManager(Context context) {
-        this.context = context;
-        if (context instanceof Application) {
-            ((Application) context).registerActivityLifecycleCallbacks(this);
-        }
+        this.context = context.getApplicationContext();
     }
 
-    /** 加载广告 */
+    // 预加载广告
     public void loadAd() {
-        if (isAdAvailable()) return;
+        if (isLoadingAd || mAppOpenAd != null) return;
 
+        isLoadingAd = true;
         AdRequest request = new AdRequest.Builder().build();
-        AppOpenAd.load(
-                context,
-                AD_UNIT_ID,
-                request,
+        AppOpenAd.load(context, AD_UNIT_ID, request,
                 AppOpenAd.APP_OPEN_AD_ORIENTATION_PORTRAIT,
                 new AppOpenAd.AppOpenAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull AppOpenAd ad) {
-                        Log.d(LOG_TAG, "开屏广告加载成功");
-                        appOpenAd = ad;
-                        loadTime = (new Date()).getTime();
+                        mAppOpenAd = ad;
+                        isLoadingAd = false;
+                        Log.d(TAG, "广告加载成功");
                     }
 
                     @Override
-                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                        Log.e(LOG_TAG, "开屏广告加载失败: " + loadAdError.getMessage());
+                    public void onAdFailedToLoad(@NonNull com.google.android.gms.ads.LoadAdError loadAdError) {
+                        isLoadingAd = false;
+                        mAppOpenAd = null;
+                        Log.e(TAG, "广告加载失败: " + loadAdError.getMessage());
                     }
                 });
     }
 
-    /** 展示广告，需要传 Activity */
-    public void showAdIfAvailable(Activity activity, final AdCompleteListener listener) {
+    // 展示广告
+    public void showAdIfAvailable(@NonNull Activity activity) {
         if (isShowingAd) return;
-        if (!isAdAvailable()) {
+
+        if (mAppOpenAd == null) {
+            Log.d(TAG, "广告还没准备好，重新加载...");
             loadAd();
-            if (listener != null) listener.onAdComplete();
             return;
         }
 
-        appOpenAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+        mAppOpenAd.setFullScreenContentCallback(new FullScreenContentCallback() {
             @Override
-            public void onAdDismissedFullScreenContent() {
-                appOpenAd = null;
-                isShowingAd = false;
-                loadAd(); // 关闭后预加载下一个广告
-                if (listener != null) listener.onAdComplete();
+            public void onAdShowedFullScreenContent() {
+                isShowingAd = true;
+                Log.d(TAG, "广告已展示");
             }
 
             @Override
             public void onAdFailedToShowFullScreenContent(AdError adError) {
-                appOpenAd = null;
                 isShowingAd = false;
-                if (listener != null) listener.onAdComplete();
+                mAppOpenAd = null;
+                Log.e(TAG, "广告展示失败: " + adError.getMessage());
+                loadAd();
             }
 
             @Override
-            public void onAdShowedFullScreenContent() {
-                isShowingAd = true;
+            public void onAdDismissedFullScreenContent() {
+                isShowingAd = false;
+                mAppOpenAd = null;
+                Log.d(TAG, "广告已关闭");
+                loadAd(); // 展示完自动预加载下一条
             }
         });
 
-        appOpenAd.show(activity);
+        mAppOpenAd.show(activity);
     }
-
-    private boolean isAdAvailable() {
-        return appOpenAd != null && (new Date().getTime() - loadTime) < 30 * 60 * 1000;
-    }
-
-    @Override
-    public void onActivityCreated(@NonNull Activity activity, Bundle bundle) { }
-    @Override
-    public void onActivityStarted(@NonNull Activity activity) { }
-    @Override
-    public void onActivityResumed(@NonNull Activity activity) { }
-    @Override
-    public void onActivityPaused(@NonNull Activity activity) { }
-    @Override
-    public void onActivityStopped(@NonNull Activity activity) { }
-    @Override
-    public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle bundle) { }
-    @Override
-    public void onActivityDestroyed(@NonNull Activity activity) { }
-
-    public interface AdCompleteListener { void onAdComplete(); }
 }
+

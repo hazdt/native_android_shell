@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.util.Log;
 import android.widget.FrameLayout;
 
+import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.AdListener;
 
@@ -18,6 +20,9 @@ import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 
 import com.google.android.gms.ads.appopen.AppOpenAd;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Date;
 
@@ -105,7 +110,8 @@ public class AdmobModule extends UniModule {
 
                             @Override
                             public void onAdFailedToLoad(LoadAdError adError) {
-                                if (callback != null) callback.invoke("appopen_failed");
+                                Log.e("AdMob", "AppOpenAd 加载失败: " + adError.getMessage());
+                                if (callback != null) callback.invoke("appopen_failed: " + adError.getMessage());
                             }
                         });
                 break;
@@ -114,7 +120,7 @@ public class AdmobModule extends UniModule {
 
     // 展示广告
     @UniJSMethod(uiThread = true)
-    public void showAd(String type) {
+    public void showAd(String type, final UniJSCallback callback) {
         Activity activity = (Activity) mUniSDKInstance.getContext();
         switch (type.toLowerCase()) {
             case "interstitial":
@@ -126,11 +132,62 @@ public class AdmobModule extends UniModule {
                 if (mRewardedAd != null) {
                     mRewardedAd.show(activity, rewardItem -> {
                         Log.d("AdMob", "用户获得奖励: " + rewardItem.getAmount());
+
+                        if (callback != null) callback.invoke(rewardItem);
                     });
                 }
                 break;
             case "appopen":
                 if (mAppOpenAd != null) {
+                    JSONObject result = new JSONObject();
+
+                    mAppOpenAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                        @Override
+                        public void onAdShowedFullScreenContent() {
+                            Log.d("AppOpenAd", "广告已展示");
+
+                            if (callback != null) {
+                                try {
+                                    result.put("ad_status", "is_show");
+                                } catch (JSONException e) {
+                                    throw new RuntimeException(e);
+                                }
+                                callback.invoke(result);
+                            }
+                        }
+
+                        @Override
+                        public void onAdFailedToShowFullScreenContent(AdError adError) {
+                            Log.d("AppOpenAd", "广告展示失败: " + adError.getMessage());
+                            mAppOpenAd = null;
+
+                            if (callback != null) {
+                                try {
+                                    result.put("ad_status", "is_error");
+                                } catch (JSONException e) {
+                                    throw new RuntimeException(e);
+                                }
+                                callback.invoke(result);
+                            }
+                        }
+
+                        @Override
+                        public void onAdDismissedFullScreenContent() {
+                            Log.d("AppOpenAd", "广告已关闭");
+                            mAppOpenAd = null;
+                            // 这里可以回调给 uniapp，让前端继续进入首页
+
+                            if (callback != null) {
+                                try {
+                                    result.put("ad_status", "is_close");
+                                } catch (JSONException e) {
+                                    throw new RuntimeException(e);
+                                }
+                                callback.invoke(result);
+                            }
+                        }
+                    });
+
                     mAppOpenAd.show(activity);
                 }
                 break;
