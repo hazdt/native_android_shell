@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdError;
@@ -52,12 +53,13 @@ public class AppOpenAdManager {
     }
 
     // 展示广告
-    public void showAdIfAvailable(@NonNull Activity activity) {
+    public void showAdIfAvailable(@NonNull final Activity activity, @Nullable final Runnable adClosedCallback) {
         if (isShowingAd) return;
 
         if (mAppOpenAd == null) {
             Log.d(TAG, "广告还没准备好，重新加载...");
             loadAd();
+            if (adClosedCallback != null) adClosedCallback.run(); // 广告没准备好，直接回调
             return;
         }
 
@@ -74,6 +76,7 @@ public class AppOpenAdManager {
                 mAppOpenAd = null;
                 Log.e(TAG, "广告展示失败: " + adError.getMessage());
                 loadAd();
+                if (adClosedCallback != null) adClosedCallback.run();
             }
 
             @Override
@@ -81,11 +84,13 @@ public class AppOpenAdManager {
                 isShowingAd = false;
                 mAppOpenAd = null;
                 Log.d(TAG, "广告已关闭");
-                loadAd(); // 展示完自动预加载下一条
+                loadAd();
+                if (adClosedCallback != null) adClosedCallback.run();
             }
         });
 
         mAppOpenAd.show(activity);
     }
+
 }
 
