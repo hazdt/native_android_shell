@@ -9,6 +9,16 @@
           "class": "io.dcloud.uniplugin_admob.AdmobModule"
         }
       ]
+    },
+    {
+      "hooksClass": "",
+      "plugins": [
+        {
+          "type": "module",
+          "name": "NativeAdModule",
+          "class": "io.dcloud.uniplugin_admob.NativeAdModule"
+        }
+      ]
     }
   ]
 }
