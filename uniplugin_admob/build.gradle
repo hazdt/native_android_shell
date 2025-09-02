@@ -33,25 +33,27 @@ repositories {
 }
 
 dependencies {
+    // uniapp 基础依赖，只在插件编译时需要
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
-
     compileOnly fileTree(dir: '../app/libs', include: ['uniapp-v8-release.aar'])
 
-    compileOnly 'androidx.recyclerview:recyclerview:1.0.0'
-    compileOnly 'androidx.legacy:legacy-support-v4:1.0.0'
-    compileOnly 'androidx.appcompat:appcompat:1.0.0'
-    implementation 'com.alibaba:fastjson:1.2.83'
-    implementation 'com.facebook.fresco:fresco:1.13.0'
+    // AndroidX 基础库（宿主 App 需要，改成 api）
+    api 'androidx.recyclerview:recyclerview:1.0.0'
+    api 'androidx.legacy:legacy-support-v4:1.0.0'
+    api 'androidx.appcompat:appcompat:1.0.0'
 
-    /*implementation 'com.android.support:appcompat-v7:28.0.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'*/
+    // 第三方库（宿主 App 需要，改成 api）
+    api 'com.alibaba:fastjson:1.2.83'
+    api 'com.facebook.fresco:fresco:1.13.0'
 
-    // 谷歌ad
-    implementation 'com.google.android.gms:play-services-ads:23.3.0'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime:2.6.2'
+    // Google AdMob SDK（宿主 App 必须能访问，改成 api）
+    api 'com.google.android.gms:play-services-ads:23.3.0'
 
-    implementation 'com.google.android.material:material:1.9.0'
+    // Lifecycle（你的插件里用到，宿主也必须有，改成 api）
+    api 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    api 'androidx.lifecycle:lifecycle-runtime:2.6.2'
+
+    // Material Design（宿主需要，改成 api）
+    api 'com.google.android.material:material:1.9.0'
 }
+

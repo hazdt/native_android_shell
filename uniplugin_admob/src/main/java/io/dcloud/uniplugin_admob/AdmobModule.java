@@ -4,21 +4,20 @@ import android.app.Activity;
 import android.util.Log;
 import android.widget.FrameLayout;
 
-import com.google.android.gms.ads.AdError;
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.AdListener;
-
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
-
 import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
-
 import com.google.android.gms.ads.appopen.AppOpenAd;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.AdError;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,7 +32,6 @@ public class AdmobModule extends UniModule {
     private AdView mBannerAd;
     private AppOpenAd mAppOpenAd;
 
-    // 加载广告
     @UniJSMethod(uiThread = true)
     public void loadAd(String type, String adUnitId, final UniJSCallback callback) {
         Activity activity = (Activity) mUniSDKInstance.getContext();
@@ -44,15 +42,15 @@ public class AdmobModule extends UniModule {
                 InterstitialAd.load(activity, adUnitId, adRequest,
                         new InterstitialAdLoadCallback() {
                             @Override
-                            public void onAdLoaded(InterstitialAd ad) {
+                            public void onAdLoaded(@NonNull InterstitialAd ad) {
                                 mInterstitialAd = ad;
-                                if (callback != null) callback.invoke("interstitial_loaded");
+                                invokeCallback(callback, "interstitial_loaded", null);
                             }
 
                             @Override
-                            public void onAdFailedToLoad(LoadAdError adError) {
+                            public void onAdFailedToLoad(@NonNull LoadAdError adError) {
                                 Log.d("AdMob", adError.toString());
-                                if (callback != null) callback.invoke("interstitial_failed");
+                                invokeCallback(callback, "interstitial_failed", adError.getMessage());
                             }
                         });
                 break;
@@ -61,15 +59,15 @@ public class AdmobModule extends UniModule {
                 RewardedAd.load(activity, adUnitId, adRequest,
                         new RewardedAdLoadCallback() {
                             @Override
-                            public void onAdLoaded(RewardedAd ad) {
+                            public void onAdLoaded(@NonNull RewardedAd ad) {
                                 mRewardedAd = ad;
-                                if (callback != null) callback.invoke("rewarded_loaded");
+                                invokeCallback(callback, "rewarded_loaded", null);
                             }
 
                             @Override
-                            public void onAdFailedToLoad(LoadAdError adError) {
+                            public void onAdFailedToLoad(@NonNull LoadAdError adError) {
                                 Log.d("AdMob", adError.toString());
-                                if (callback != null) callback.invoke("rewarded_failed");
+                                invokeCallback(callback, "rewarded_failed", adError.getMessage());
                             }
                         });
                 break;
@@ -78,21 +76,21 @@ public class AdmobModule extends UniModule {
                 mBannerAd = new AdView(activity);
                 mBannerAd.setAdUnitId(adUnitId);
                 mBannerAd.setAdSize(AdSize.BANNER);
-                mBannerAd.loadAd(adRequest);
                 mBannerAd.setAdListener(new AdListener() {
                     @Override
                     public void onAdLoaded() {
-                        if (callback != null) callback.invoke("banner_loaded");
+                        invokeCallback(callback, "banner_loaded", null);
                     }
 
                     @Override
-                    public void onAdFailedToLoad(LoadAdError adError) {
-                        if (callback != null) callback.invoke("banner_failed");
+                    public void onAdFailedToLoad(@NonNull LoadAdError adError) {
+                        invokeCallback(callback, "banner_failed", adError.getMessage());
                     }
                 });
-                // 将 banner 添加到页面
+
                 FrameLayout decorView = (FrameLayout) activity.getWindow().getDecorView();
                 decorView.addView(mBannerAd);
+                mBannerAd.loadAd(adRequest);
                 break;
 
             case "appopen":
@@ -100,97 +98,100 @@ public class AdmobModule extends UniModule {
                         AppOpenAd.APP_OPEN_AD_ORIENTATION_PORTRAIT,
                         new AppOpenAd.AppOpenAdLoadCallback() {
                             @Override
-                            public void onAdLoaded(AppOpenAd ad) {
+                            public void onAdLoaded(@NonNull AppOpenAd ad) {
                                 mAppOpenAd = ad;
-                                if (callback != null) callback.invoke("appopen_loaded");
+                                invokeCallback(callback, "appopen_loaded", null);
                             }
 
                             @Override
-                            public void onAdFailedToLoad(LoadAdError adError) {
+                            public void onAdFailedToLoad(@NonNull LoadAdError adError) {
                                 Log.e("AdMob", "AppOpenAd 加载失败: " + adError.getMessage());
-                                if (callback != null) callback.invoke("appopen_failed: " + adError.getMessage());
+                                invokeCallback(callback, "appopen_failed", adError.getMessage());
                             }
                         });
                 break;
         }
     }
 
-    // 展示广告
     @UniJSMethod(uiThread = true)
     public void showAd(String type, final UniJSCallback callback) {
         Activity activity = (Activity) mUniSDKInstance.getContext();
+
         switch (type.toLowerCase()) {
             case "interstitial":
                 if (mInterstitialAd != null) {
                     mInterstitialAd.show(activity);
+                    invokeCallback(callback, "interstitial_shown", null);
+                } else {
+                    invokeCallback(callback, "interstitial_not_ready", null);
                 }
                 break;
+
             case "rewarded":
                 if (mRewardedAd != null) {
                     mRewardedAd.show(activity, rewardItem -> {
-                        Log.d("AdMob", "用户获得奖励: " + rewardItem.getAmount());
-
-                        if (callback != null) callback.invoke(rewardItem);
+                        JSONObject result = new JSONObject();
+                        try {
+                            result.put("amount", rewardItem.getAmount());
+                            result.put("type", rewardItem.getType());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        invokeCallback(callback, "rewarded_shown", result);
                     });
+                } else {
+                    invokeCallback(callback, "rewarded_not_ready", null);
                 }
                 break;
+
             case "appopen":
                 if (mAppOpenAd != null) {
-                    JSONObject result = new JSONObject();
-
                     mAppOpenAd.setFullScreenContentCallback(new FullScreenContentCallback() {
                         @Override
                         public void onAdShowedFullScreenContent() {
-                            Log.d("AppOpenAd", "广告已展示");
-
-                            if (callback != null) {
-                                try {
-                                    result.put("ad_status", "is_show");
-                                } catch (JSONException e) {
-                                    throw new RuntimeException(e);
-                                }
-                                callback.invoke(result);
-                            }
+                            invokeCallback(callback, "appopen_shown", null);
                         }
 
                         @Override
-                        public void onAdFailedToShowFullScreenContent(AdError adError) {
-                            Log.d("AppOpenAd", "广告展示失败: " + adError.getMessage());
-                            mAppOpenAd = null;
-
-                            if (callback != null) {
-                                try {
-                                    result.put("ad_status", "is_error");
-                                } catch (JSONException e) {
-                                    throw new RuntimeException(e);
-                                }
-                                callback.invoke(result);
-                            }
+                        public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
+                            invokeCallback(callback, "appopen_failed", adError.getMessage());
                         }
 
                         @Override
                         public void onAdDismissedFullScreenContent() {
-                            Log.d("AppOpenAd", "广告已关闭");
                             mAppOpenAd = null;
-                            // 这里可以回调给 uniapp，让前端继续进入首页
-
-                            if (callback != null) {
-                                try {
-                                    result.put("ad_status", "is_close");
-                                } catch (JSONException e) {
-                                    throw new RuntimeException(e);
-                                }
-                                callback.invoke(result);
-                            }
+                            invokeCallback(callback, "appopen_dismissed", null);
                         }
                     });
-
                     mAppOpenAd.show(activity);
+                } else {
+                    invokeCallback(callback, "appopen_not_ready", null);
                 }
                 break;
+
             case "banner":
-                // Banner 广告是自动展示的，不需要 show
+                // Banner 自动展示
                 break;
         }
+    }
+
+    // 统一回调方法，保证 JSON 返回、线程安全
+    private void invokeCallback(UniJSCallback callback, String status, Object data) {
+        if (callback == null) return;
+
+        Activity activity = (Activity) mUniSDKInstance.getContext();
+        activity.runOnUiThread(() -> {
+            try {
+                JSONObject res = new JSONObject();
+                res.put("status", status);
+                if (data != null) {
+                    if (data instanceof String) res.put("message", data);
+                    else if (data instanceof JSONObject) res.put("data", data);
+                }
+                callback.invoke(res);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }
