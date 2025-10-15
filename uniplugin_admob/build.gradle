@@ -35,7 +35,7 @@ repositories {
 dependencies {
     // uniapp 基础依赖，只在插件编译时需要
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
-    compileOnly fileTree(dir: '../app/libs', include: ['uniapp-v8-release.aar'])
+//    compileOnly fileTree(dir: '../app/libs', include: ['uniapp-v8-release.aar'])
 
     // AndroidX 基础库（宿主 App 需要，改成 api）
     api 'androidx.recyclerview:recyclerview:1.0.0'

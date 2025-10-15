@@ -1,0 +1,24 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    namespace 'com.yourcompany.twitterlogin'
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 34
+    }
+
+    compileOptions { sourceCompatibility JavaVersion.VERSION_1_8; targetCompatibility JavaVersion.VERSION_1_8 }
+}
+
+dependencies {
+    // AppAuth 用于 OAuth2 + PKCE
+    implementation 'net.openid:appauth:0.11.1'
+    // okhttp 用于直接访问 REST（可选）
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    // fastjson（如果你喜欢）
+    implementation 'com.alibaba:fastjson:2.0.36' // 可选
+}

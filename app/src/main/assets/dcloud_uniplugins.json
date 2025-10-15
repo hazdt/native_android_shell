@@ -5,18 +5,8 @@
       "plugins": [
         {
           "type": "module",
-          "name": "AdmobModule",
-          "class": "io.dcloud.uniplugin_admob.AdmobModule"
-        }
-      ]
-    },
-    {
-      "hooksClass": "",
-      "plugins": [
-        {
-          "type": "module",
-          "name": "NativeAdModule",
-          "class": "io.dcloud.uniplugin_admob.NativeAdModule"
+          "name": "PayModule",
+          "class": "com.example.googlepayplugin.PayModule"
         }
       ]
     }

@@ -87,6 +87,13 @@
                 <data
                     android:scheme=""
                     tools:ignore="AppLinkUrlError" />
+
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- 注意：你的自定义 scheme -->
+<!--                <data android:scheme="https://www.baidu.com?yy=1" />-->
+<!--                <data android:host="callback" />-->
             </intent-filter>
         </activity>
         <meta-data

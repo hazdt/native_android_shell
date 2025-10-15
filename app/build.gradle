@@ -89,7 +89,8 @@ dependencies {
 //    implementation project(':uniplugin_richalert')
     // uts原生插件
 //    implementation project(':uts-toast')
-    implementation project(':uniplugin_admob')
+//    implementation project(':uniplugin_admob')
+//    implementation project(':uniplugin_twitterlogin')
     // uts依赖
     implementation "com.squareup.okhttp3:okhttp:3.12.12"
     implementation "androidx.core:core-ktx:1.6.0"

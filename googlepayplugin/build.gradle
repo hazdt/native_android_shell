@@ -1,0 +1,55 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.example.googlepayplugin'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.example.googlepayplugin"
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+}
+
+dependencies {
+    // 必须：UniApp 原生插件运行环境
+    compileOnly fileTree(dir: 'libs', include: ['*.jar'])
+    compileOnly fileTree(dir: '../app/libs', include: ['uniapp-v8-release.aar'])
+
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'com.google.android.material:material:1.13.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
+
+    compileOnly 'com.alibaba:fastjson:1.2.83'
+    compileOnly 'androidx.appcompat:appcompat:1.6.1'
+
+    // Google Pay SDK（Google Wallet）
+    implementation 'com.google.android.gms:play-services-wallet:19.3.0'
+
+    // ViewModel + Lifecycle（CheckoutViewModel 用到）
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.6.2'
+    implementation 'androidx.lifecycle:lifecycle-livedata:2.6.2'
+    implementation 'androidx.activity:activity-ktx:1.9.0'
+
+    // 其他工具库（如你需要 JSON 解析，可选）
+    implementation 'org.json:json:20231013'
+}
