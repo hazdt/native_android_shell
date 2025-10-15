@@ -121,6 +121,10 @@ i, span, em {
   text-overflow: ellipsis;
   overflow: hidden;
 }
+.nvue_ellipsis {
+  lines: 1; /* 限制为单行 */
+  text-overflow: ellipsis; /* 超出省略号 */
+}
 
 .is_iphone_x{
   padding-bottom: 5.5vw;
@@ -137,6 +141,7 @@ i, span, em {
 
 .btn {
   display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
   position: relative;
